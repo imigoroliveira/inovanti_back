@@ -14,15 +14,35 @@ export const EventsController = {
   },
 
   async addParticipant(req: Request, res: Response) {
-    const { name, email, phone } = req.body;
+    const { email } = req.body;
     const { eventId } = req.params;
 
     const event = await eventRepo.findOneBy({ id: Number(eventId) });
     if (!event) return res.status(404).json({ message: "Evento não encontrado" });
 
-    const participant = participantRepo.create({ name, email, phone, event });
+    const participant = await participantRepo.findOneBy({ email });
+    if (!participant) return res.status(404).json({ message: "Participante não encontrado" });
+
+    participant.event = event;
     const saved = await participantRepo.save(participant);
     return res.status(201).json(saved);
+  },
+
+  async getById(req: Request, res: Response) {
+    const { id } = req.params;
+    const event = await eventRepo.findOneBy({ id: Number(id) });
+    return res.json(event);
+  },
+
+  async getByTitle(req: Request, res: Response) {
+    const { title } = req.params;
+    const event = await eventRepo.findOneBy({ name: title });
+    return res.json(event);
+  },
+
+  async list(req: Request, res: Response) {
+    const events = await eventRepo.find();
+    return res.json(events);
   },
 
   async listParticipants(req: Request, res: Response) {

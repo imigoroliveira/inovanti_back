@@ -11,6 +11,6 @@ app.use("/events", eventRoutes);
 app.use("/participants", eventParticipants);
 
 AppDataSource.initialize().then(() => {
-  console.log("📦 Banco conectado!");
+  console.log("Banco conectado!");
   app.listen(3000, () => console.log("Servidor rodando na porta 3000"));
 });

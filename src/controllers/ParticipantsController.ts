@@ -6,9 +6,22 @@ const repo = AppDataSource.getRepository(Participants);
 
 export const ParticipantsController = {
   async create(req: Request, res: Response) {
-    const participant = repo.create(req.body);
+    const { name, email, phone } = req.body;
+    const participant = repo.create({ name, email, phone });
     const result = await repo.save(participant);
-    return res.json(result);
+    return res.status(201).json(result);
+  },
+
+  async getById(req: Request, res: Response) {
+    const { id } = req.params;
+    const participant = await repo.findOneBy({ id: Number(id) });
+    return res.json(participant);
+  },
+
+  async getByEmail(req: Request, res: Response) {
+    const { email } = req.params;
+    const participant = await repo.findOneBy({ email });
+    return res.json(participant);
   },
 
   async list(req: Request, res: Response) {
